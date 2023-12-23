@@ -5,7 +5,7 @@ from code import interact
 import tkinter
 from tkinter import messagebox
 import os
-from PIL import ImageTk, Image
+from PIL import Image, ImageTk
 from ConectDB import connect, close_connection
 import os
 frm = tkinter.Tk()
