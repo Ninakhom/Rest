@@ -4,9 +4,6 @@ from tkinter import *
 from PIL import Image, ImageTk
 import tkinter.ttk as ttk
 
-
-
-
 #setup from
 frm = tkinter.Tk()
 
