@@ -1,11 +1,8 @@
 #import 
 import tkinter 
 from tkinter import *
-from PIL import Image, ImageTk
+from PIL import ImageTk, Image
 import tkinter.ttk as ttk
-
-
-
 
 #setup from
 frm = tkinter.Tk()
@@ -54,6 +51,8 @@ label5.place(x=350, y=320)
 
 #Drink image
 
+#Drink image
+
 imgd1 = Image.open("coke.jpg")
 imgd1 = imgd1.resize((100, 100), Image.ANTIALIAS)
 photod1 = ImageTk.PhotoImage(imgd1)
@@ -63,14 +62,15 @@ labeld1.place(x=50, y=550)
 imgd2 = Image.open("chocolate.jpg")
 imgd2 = imgd2.resize((100, 100), Image.ANTIALIAS)
 photod2 = ImageTk.PhotoImage(imgd2)
-label2 = tkinter.Label(image=photod2)
-label2.place(x=200, y=550)
+labeld2 = tkinter.Label(image=photod2)  # <-- Corrected variable name to labeld2
+labeld2.place(x=200, y=550)
 
 imgd3 = Image.open("greentea.jpg")
 imgd3 = imgd3.resize((100, 100), Image.ANTIALIAS)
 photod3 = ImageTk.PhotoImage(imgd3)
 labeld3 = tkinter.Label(image=photod3)
 labeld3.place(x=350, y=550)
+
 
 
 #GUI
