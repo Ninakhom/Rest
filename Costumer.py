@@ -183,7 +183,6 @@ button_add.place(x="1200", y="100")
 button_confirm = tkinter.Button(text="Confirm Order", command=submit_order)
 button_confirm.place(x="1200", y="500")
 
-
 # Table number ComboBox
 combo_table = ttk.Combobox(frm)
 combo_table['values'] = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
