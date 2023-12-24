@@ -35,16 +35,15 @@ def display_orders():
         order_id, table_number, order_date, status, item_name, quantity, price = order
 
         label = tk.Label(frm, text=f"Order ID: {order_id}, Table: {table_number}, Status: {status}")
-        label.place
+        label.pack()
 
         item_label = tk.Label(frm, text=f"Item: {item_name}, Quantity: {quantity}, Price: {price}")
-        item_label.place(x=550, y=460)
+        item_label.pack()
 
         complete_button = ttk.Button(frm, text="Mark as Completed", command=lambda order_id=order_id: update_order_status(order_id))
-        complete_button.pack(x=550,y=560)
+        complete_button.pack()
 
-    # Schedule the display_orders function to run again after a certain interval (e.g., every 5000 milliseconds or 5 seconds)
-    frm.after(10000, display_orders)
+
 
 
 # Set up the main window

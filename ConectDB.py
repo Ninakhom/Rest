@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # ConnectDB.py
 
 import mysql.connector
@@ -28,4 +26,3 @@ def get_cursor(connection):
         return connection.cursor()
     else:
         return None
->>>>>>> af9223f9155d6239345970c54263e4e47445eafa
