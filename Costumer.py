@@ -7,6 +7,7 @@ import tkinter.ttk as ttk
 import mysql.connector  # Import the MySQL connector module
 from ConectDB import connect, close_connection
 from tkinter import messagebox
+import sys
 
 connection = connect()
 cursor = connection.cursor()
@@ -15,8 +16,8 @@ cursor = connection.cursor()
 
 # Create the main window
 frm = tkinter.Tk()
-
-# Prices for each food item
+user_username = None
+# Prices for each food itemuser_username = None
 food_prices = {
     'Hamburger': 40000,
     'Sapageti': 40000,
@@ -28,9 +29,17 @@ food_prices = {
     'Chocolate': 15000,
     'Greentea': 15000,
 }
+def set_user_author(job_title, username, lbname):
+    global user_author
+    global user_username
+    user_author = job_title.lower()  # Convert to lowercase for consistent comparison
+    user_username = username
+
 
 # Function to add item to the treeview
 def add_item():
+    global user_username  # Declare user_username as a global variable
+
     food_name = combo_food.get()
     food_quantity = spinbox_quantity.get()
     table_number = combo_table.get()
@@ -40,14 +49,35 @@ def add_item():
 
     mytree.insert('', 'end', values=(table_number, food_name, food_price, food_quantity, food_price * int(food_quantity)))
 
+    # Retrieve user_id based on the logged-in username
+    try:
+        cursor.execute("SELECT user_id FROM users WHERE username = %s", (user_username,))
+        result = cursor.fetchone()
+        if result:
+            user_id = result[0]
+        else:
+            raise ValueError("User not found.")
+    except mysql.connector.Error as err:
+        print(f"Error retrieving user_id: {err}")
+        return
+
     # Insert data into the database
     try:
-        query = "INSERT INTO  (table_number, food_name, food_price, food_amount) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (table_number, food_name, food_price, food_quantity))
+        query = "INSERT INTO orders (table_number, user_id) VALUES (%s, %s)"
+        cursor.execute(query, (table_number, user_id))
         conn.commit()
-        print("Data inserted into the database.")
+        print("Order data inserted into the database.")
+
+        # Retrieve the order_id of the newly inserted order
+        order_id = cursor.lastrowid
+
+        # Insert items into order_items table
+        query = "INSERT INTO order_items (order_id, item_name, quantity, price) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (order_id, food_name, food_quantity, food_price))
+        conn.commit()
+        print("Order item inserted into the database.")
     except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        print(f"Error inserting data into the database: {err}")
 
 # Function to confirm menu 
 def insert_order_item_to_database(order_id, item_name, quantity, price):
@@ -93,7 +123,10 @@ frm.title("Obee Restaurant")
 frm.geometry("1166x718")
 frm.config(bg="#008000")
 frm.state("zoomed")
-
+job_title = sys.argv[1].lower() if len(sys.argv) > 1 else "default"
+username = sys.argv[2] if len(sys.argv) > 2 else "Guest"
+welcome_label = tkinter.Label(frm, text=f"Welcome, {username}!", font=('Times New Roman', 16))
+welcome_label.pack()
 # Image paths
 img_paths = ["hamburger.jpg", "Sapageti.jpg.jpg", "kapao.jpg", "phutthai.jpg", "kaophut.jpg", "papayapokpok.jpg",
              "coke.jpg", "chocolate.jpg", "greentea.jpg"]
@@ -172,6 +205,7 @@ button_confirm.place(x="1200", y="500")
 combo_table = ttk.Combobox(frm)
 combo_table['values'] = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
 combo_table.place(x="600", y="100")
+
 
 # Food ComboBox
 combo_food = ttk.Combobox(frm)
