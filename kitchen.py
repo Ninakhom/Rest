@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from ConectDB import connect, close_connection
-
+from PIL import Image, ImageTk
 # Connect to the database
 connection = connect()
 
@@ -45,12 +45,32 @@ def display_orders():
 
 # Set up the main window
 frm = tk.Tk()
-frm.geometry('800x600')
+frm.state('zoomed')
+frm.geometry('1166x718')
 frm.title('Kitchen Orders')
+
+
 
 # Display orders initially
 display_orders()
 
+frm.resizable(0,0)
+frm.state('zoomed')
+bg_frame=Image.open('images\\pexels-chan-walrus-958545 (1).jpg')
+photo =ImageTk.PhotoImage(bg_frame)
+bg_panel=tk.Label(frm,image=photo)
+bg_panel.image = photo
+bg_panel=tk.Label(frm,image=photo)
+bg_panel.image = photo
+bg_panel.pack(fill='both',expand='yes')
+lgn_frame = tk.Frame(frm, bg='#ffffff', width=950, height=600)
+lgn_frame.place(x=500, y=230)
+frm.txt = "Orders"
+frm.heading = tk.Label(lgn_frame, text=frm.txt, font=('yu gothic ui', 25, "bold"), bg="#ffffff",
+                             
+                             bd=5,
+                             relief="flat")
+frm.heading.place(x=350, y=30, width=300, height=30)
 # Start the Tkinter main loop
 frm.mainloop()
 
