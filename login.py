@@ -49,6 +49,11 @@ def move_to_next(event):
     widget.tk_focusNext().focus()
 frm.resizable(0,0)
 frm.state('zoomed')
+bg_frame=Image.open('images\\bg.jpg')
+photo =ImageTk.PhotoImage(bg_frame)
+bg_panel=tkinter.Label(frm,image=photo)
+bg_panel.image = photo
+bg_panel.pack(fill='both',expand='yes')
 lgn_frame = tkinter.Frame(frm, bg='#040405', width=950, height=600)
 lgn_frame.place(x=500, y=230)
 frm.txt = "WELCOME"

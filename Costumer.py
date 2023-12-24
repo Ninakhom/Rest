@@ -15,6 +15,24 @@ cursor = connection.cursor()
 
 # Create the main window
 frm = tkinter.Tk()
+#set blackground to green 
+frm.configure(bg='#008000')
+frm.title("Obee Restaurant")
+frm.geometry("1500x1000")
+
+# Create a list of food items
+food_items = ['Hamburger', 'Sapageti', 'Kapao', 'Phutthai', 'Kaophut', 'Papayapokpok', 'Coke', 'Chocolate', 'Greentea']
+
+# Create a list of drink items
+drink_items = ['Coke', 'Chocolate', 'Greentea']
+
+# Create a list of table numbers
+table_numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+
+# Create a list of quantities
+quantities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# Create a list of prices for each food item
 
 # Prices for each food item
 food_prices = {
@@ -100,41 +118,53 @@ for col in columns:
     mytree.heading(col, text=col)
 
 # GUI labels
-lb_wel = tkinter.Label(text="Welcome To Obee Restaurant", fg="black")
+#remove front ground of the label
+# remove black gorund from text
+
+lb_wel = tkinter.Label(text="Welcome To Obee Restaurant", fg="black" )
+lb_wel.configure(bg='#008000')
+lb_wel.configure(fg='Black')
+lb_wel.configure(font=('times new roman', 20, 'bold'))
 lb_wel.place(x="10", y="20")
 
 label_food = tkinter.Label(text="Food", fg="black")
+label_food.configure(bg='#008000')
+label_food.configure(fg='Black')
+label_food.configure(font=('times new roman',10, 'bold'))
 label_food.place(x="10", y="100")
 
 label_drink = tkinter.Label(text="Drink", fg="black")
+label_drink.configure(bg='#008000')
+label_drink.configure(fg='Black')
+label_drink.configure(font=('times new roman', 10, 'bold'))
 label_drink.place(x="10", y="500")
 
 # Name labels for food items
-label_hamburger = tkinter.Label(text="Hamburger", fg="black")
+label_hamburger = tkinter.Label(text="Hamburger   40.000kip", fg="black")
 label_hamburger.place(x="70", y="280")
 
-label_sapageti = tkinter.Label(text="Sapageti", fg="black")
+label_sapageti = tkinter.Label(text="Sapageti   40.000kip", fg="black")
 label_sapageti.place(x="220", y="280")
 
-label_kapao = tkinter.Label(text="Kapao", fg="black")
+label_kapao = tkinter.Label(text="Kapao    30.000kip", fg="black")
 label_kapao.place(x="370", y="280")
 
-label_phutthai = tkinter.Label(text="Phutthai", fg="black")
+label_phutthai = tkinter.Label(text="Phutthai   35.000kip", fg="black")
 label_phutthai.place(x="70", y="450")
 
-label_kaophut = tkinter.Label(text="Kaophut", fg="black")
+label_kaophut = tkinter.Label(text="Kaophut   30.000kip", fg="black")
 label_kaophut.place(x="220", y="450")
 
-label_papayapokpok = tkinter.Label(text="Papayapokpok", fg="black")
+label_papayapokpok = tkinter.Label(text="Papayapokpok   40.000kip", fg="black")
 label_papayapokpok.place(x="370", y="450")
 
-label_coke = tkinter.Label(text="Coke", fg="black")
+label_coke = tkinter.Label(text="Coke    10.000kip", fg="black")
 label_coke.place(x="80", y="670")
 
-label_chocolate = tkinter.Label(text="Chocolate", fg="black")
+label_chocolate = tkinter.Label(text="Chocolate  15.000kip", fg="black")
 label_chocolate.place(x="230", y="670")
 
-label_greentea = tkinter.Label(text="Greentea", fg="black")
+label_greentea = tkinter.Label(text="Greentea  15.000kip", fg="black")
 label_greentea.place(x="380", y="670")
 
 label_addtable = tkinter.Label(text="Choose Table", fg="black")
