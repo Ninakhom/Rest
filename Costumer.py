@@ -38,28 +38,19 @@ def add_item():
     # Retrieve the price based on the selected food item
     food_price = food_prices.get(food_name, 0)
 
+    # Insert item into the treeview
     mytree.insert('', 'end', values=(table_number, food_name, food_price, food_quantity, food_price * int(food_quantity)))
 
     # Insert data into the database
     try:
-        query = "INSERT INTO  (table_number, food_name, food_price, food_amount) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO orders (table_number, food_name, food_price, food_quantity) VALUES (%s, %s, %s, %s)"
         cursor.execute(query, (table_number, food_name, food_price, food_quantity))
-        conn.commit()
+        connection.commit()
         print("Data inserted into the database.")
     except mysql.connector.Error as err:
         print(f"Error: {err}")
 
-# Function to confirm menu 
-def insert_order_item_to_database(order_id, item_name, quantity, price):
-    try:
-        # Assuming `cursor` and `conn` are already defined in your code
-        query = "INSERT INTO order_items (order_id, item_name, quantity, price) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (order_id, item_name, quantity, price))
-        conn.commit()
-        print("Order item inserted into the database.")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-
+# Function to submit order
 def submit_order():
     # Get the table number
     table_number = combo_table.get()
@@ -73,9 +64,9 @@ def submit_order():
 
     # Iterate over items in mytree and insert into order_items table
     for row_id in mytree.get_children():
-        food_name = mytree.item(row_id, 'values')[1]  # Index 1 corresponds to 'food_name'
-        quantity = mytree.item(row_id, 'values')[3]   # Index 3 corresponds to 'food_quantity'
-        food_price = mytree.item(row_id, 'values')[2]  # Index 2 corresponds to 'food_price'
+        food_name = mytree.item(row_id, 'values')[1]
+        quantity = mytree.item(row_id, 'values')[3]
+        food_price = mytree.item(row_id, 'values')[2]
 
         # Insert items into order_items table
         cursor.execute("INSERT INTO order_items (order_id, item_name, quantity, price) VALUES (%s, %s, %s, %s)",
@@ -86,16 +77,10 @@ def submit_order():
     tkinter.messagebox.showinfo("Order Submitted", "Order submitted successfully.")
     mytree.delete(*mytree.get_children())  # Clear the mytree
 
-# Set window title
-frm.title("Obee Restaurant")
 
-# Set window size
-frm.geometry("1166x718")
-frm.config(bg="#008000")
-frm.state("zoomed")
 
 # Image paths
-img_paths = ["hamburger.jpg", "Sapageti.jpg.jpg", "kapao.jpg", "phutthai.jpg", "kaophut.jpg", "papayapokpok.jpg",
+img_paths = ["hamburger.jpg", "Sapageti.jpg.jpg", "kapao.jpg.", "phutthai.jpg", "kaophut.jpg", "papayapokpok.jpg",
              "coke.jpg", "chocolate.jpg", "greentea.jpg"]
 
 # Load and resize images
@@ -106,7 +91,7 @@ for i, image in enumerate(images):
     label = tkinter.Label(image=image)
     label.place(x=(50 + 150 * (i % 3)), y=(150 + 170 * (i // 3)))
 
-# Create treeview to show values    
+# Create treeview to show values
 columns = ('table_number', 'food_name', 'food_price', 'food_quantity', 'total_cost')
 mytree = ttk.Treeview(frm, columns=columns, show="headings")
 mytree.place(x="500", y="150", width="800", height="300")
@@ -168,6 +153,7 @@ button_add.place(x="1200", y="100")
 button_confirm = tkinter.Button(text="Confirm Order", command=submit_order)
 button_confirm.place(x="1200", y="500")
 
+
 # Table number ComboBox
 combo_table = ttk.Combobox(frm)
 combo_table['values'] = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
@@ -186,16 +172,7 @@ spinbox_quantity.place(x="1100", y="100" , width="50")
 frm.mainloop()
 
 # Close the database connection when the tkinter window is closed
-frm.protocol("WM_DELETE_WINDOW", lambda: [close_connection(conn), frm.destroy()])
-#treeview
-columns = ('food_name' , 'food_price')
-mytree = ttk.Treeview(frm , columns = columns , show = "headings") 
-mytree.place(x = "500" , y = "150" , width ="400", height = "300")
-
-mytree.heading('food_name', text='food_name')
-mytree.heading('food_price', text='food_price')
-
-
+frm.protocol("WM_DELETE_WINDOW", lambda: [connection.close(), frm.destroy()])
 frm.mainloop()
 
 
