@@ -40,10 +40,9 @@ def display_orders():
         item_label = tk.Label(frm, text=f"Item: {item_name}, Quantity: {quantity}, Price: {price}")
         item_label.pack()
 
-        complete_button = ttk.Button(frm, text="Mark as Completed", command=lambda order_id=order_id: update_order_status(order_id,))
+        complete_button = ttk.Button(frm, text="Mark as Completed", command=lambda order_id=order_id: update_order_status(order_id))
         complete_button.pack()
 
-    # Schedule the display_orders function to run again after a certain interval (e.g., every 5000 milliseconds or 5 seconds)
 
 
 

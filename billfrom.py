@@ -1,73 +1,118 @@
-from code import interact
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 from ConectDB import connect, close_connection
-import os
+
 connection = connect()
 cursor = connection.cursor()
-# Check if the connection is successful
-if connection is None:
-    print("Error: Unable to connect to the database.")
-    exit()
 
-cursor = connection.cursor()
+def fetch_orders():
+    try:
+        connection = connect()
+        cursor = connection.cursor()
 
-# Create the window
-window = tk.Tk()
-window.title("Bill")
-window.geometry("600x400")
+        query = """
+        SELECT orders.order_id, orders.user_id, orders.table_number, SUM(order_items.quantity) AS total_quantity,
+               SUM(order_items.quantity * order_items.price) AS total_price
+        FROM orders
+        JOIN order_items ON orders.order_id = order_items.order_id
+        GROUP BY orders.order_id, orders.user_id, orders.table_number
+        """
+        cursor.execute(query)
+        orders = cursor.fetchall()
+        return orders
 
-# Create the labels
-tk.Label(window, text="Order ID:").grid(row=0, column=0)
-tk.Label(window, text="Table Number:").grid(row=1, column=0)
-tk.Label(window, text="Customer Name:").grid(row=2, column=0)
-tk.Label(window, text="Date:").grid(row=3, column=0)
-tk.Label(window, text="Time:").grid(row=4, column=0)
-tk.Label(window, text="Total Price:").grid(row=5, column=0)
+    except Exception as err:
+        messagebox.showerror("Error", f"Error fetching orders: {err}")
+        return None
 
-# Create the entries
-order_id_entry = tk.Entry(window)
-order_id_entry.grid(row=0, column=1)
-table_number_entry = tk.Entry(window)
-table_number_entry.grid(row=1, column=1)
-customer_name_entry = tk.Entry(window)
-customer_name_entry.grid(row=2, column=1)
-date_entry = tk.Entry(window)
-date_entry.grid(row=3, column=1)
-time_entry = tk.Entry(window)
-time_entry.grid(row=4, column=1)
-total_price_entry = tk.Entry(window)
-total_price_entry.grid(row=5, column=1)
+    finally:
+        close_connection(connection)
 
-# Create the buttons
-save_button = tk.Button(window, text="Save", command=save_bill)
-save_button.grid(row=6, column=0)
-cancel_button = tk.Button(window, text="Cancel", command=window.destroy)
-cancel_button.grid(row=6, column=1)
+def generate_bill(order_id, total_price, money_amount):
+    bill_window = tk.Toplevel(frm)
+    bill_window.title(f"Bill for Order ID: {order_id}")
 
-# Function to save the bill
-def save_bill():
-    # Get the values from the entries
-    order_id = order_id_entry.get()
-    table_number = table_number_entry.get()
-    customer_name = customer_name_entry.get()
-    date = date_entry.get()
-    time = time_entry.get()
-    total_price = total_price_entry.get()
-    
-    # Insert the values into the database
-    cursor.execute("INSERT INTO bill (order_id, table_number, customer_name, date, time, total_price) VALUES (%s, %s, %s, %s, %s, %s)",
-    (order_id, table_number, customer_name, date, time, total_price))
-    connection.commit()
-    
-    # Show a message to the user
-    messagebox.showinfo("Success", "Bill saved successfully.")
-    
-    # Close the window
-    window.destroy()
+    bill_content = f"Order ID: {order_id}\n\n"
+    bill_content += f"{'Item': <20}{'Quantity': <10}{'Price'}\n"
 
-# Start the window
-window.mainloop()
+    try:
+        connection = connect()
+        cursor = connection.cursor()
 
-# Close the database connection
-close_connection(connection)
+        query = "SELECT item_name, quantity, price FROM order_items WHERE order_id = %s"
+        cursor.execute(query, (order_id,))
+        order_items = cursor.fetchall()
+
+        for item in order_items:
+            item_name, quantity, price = item
+            bill_content += f"{item_name: <20}{quantity: <10}${float(price) * quantity:,.2f}\n"
+
+        bill_content += f"\nTotal: ${float(total_price):,.2f}\n"
+        bill_content += f"Money Amount: ${float(money_amount):,.2f}\n"
+        change = float(money_amount) - float(total_price)
+        bill_content += f"Change: ${change:,.2f}"
+
+        bill_text = tk.Text(bill_window, height=20, width=40)
+        bill_text.insert(tk.END, bill_content)
+        bill_text.pack()
+
+    except Exception as e:
+        messagebox.showerror("Error", f"Error fetching order items: {e}")
+
+    finally:
+        close_connection(connection)
+
+def pay_money():
+    try:
+        money_amount = float(payment_entry.get())
+        selected_item = treeview.focus()
+        if not selected_item:
+            messagebox.showwarning("No Selection", "Please select an order to process payment.")
+            return
+
+        selected_order = treeview.item(selected_item, 'values')
+        order_id, user_id, table_number, total_quantity, total_price = selected_order[:5]
+
+        if money_amount < float(total_price):
+            messagebox.showerror("Error", "Insufficient payment amount.")
+        else:
+            result = messagebox.askyesno("Generate Bill", "Do you want to generate a bill?")
+            if result:
+                generate_bill(order_id, total_price, money_amount)
+
+            change = money_amount - float(total_price)
+            messagebox.showinfo("Payment Successful", f"Payment successful!\nChange: ${change:,.2f}")
+
+    except ValueError:
+        messagebox.showerror("Error", "Invalid payment amount. Please enter a valid number.")
+
+frm = tk.Tk()
+frm.title("Order Data")
+
+columns = ('Order ID', 'User ID', 'Table Number', 'Quantity', 'Total Price')
+global treeview
+treeview = ttk.Treeview(frm, columns=columns, show="headings")
+
+for col in columns:
+    treeview.heading(col, text=col)
+
+orders = fetch_orders()
+if orders:
+    for row in orders:
+        treeview.insert("", "end", values=row)
+
+treeview.pack()
+
+generate_bill_button = tk.Button(frm, text="Generate Bill", command=generate_bill)
+generate_bill_button.pack()
+
+payment_label = tk.Label(frm, text="Enter Payment Amount:")
+payment_label.pack()
+
+payment_entry = tk.Entry(frm)
+payment_entry.pack()
+
+pay_button = tk.Button(frm, text="Pay", command=pay_money)
+pay_button.pack()
+
+frm.mainloop()
