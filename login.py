@@ -1,9 +1,13 @@
-import tkinter 
+# from ConnectDB import create_connection, close_connection, get_cursor
+# conn = create_connection()
+# cursor = get_cursor(conn)
+from code import interact
+import tkinter
 from tkinter import messagebox
 import os
 from PIL import Image, ImageTk
 from ConectDB import connect, close_connection
-
+import os
 frm = tkinter.Tk()
 frm.geometry("1166x718")
 frm.title("Login")
@@ -11,13 +15,8 @@ frm.title("Login")
 connection = connect()
 cursor = connection.cursor()
 
-# Define global variables
-user_username = None
-id = None
 
 def login():
-    global user_username, id
-
     user = entry_username.get()
     password = entry_password.get()
 
@@ -33,19 +32,23 @@ def login():
         # Store user information globally for access in other parts of the program
         set_user_info(user_id, username, role)
         user_author = role  # Replace this with your actual logic to determine the user's role
-        name = username
+        name=username
         print(name)
         close_connection(connection)
         frm.destroy()
         os.system(f"python costumer.py {role} {username}")
 
         # Add your logic for what happens after a successful login here
-        return user_author, role, name, username, user_id
+        return user_author, role,name,username,user_id
 
 def set_user_info(user_id, username, role):
-    global user_username, id
-    user_username = username
-    id = user_id
+    global user_author
+    user_author = role
+    global name
+    name=username
+    global id
+    uid=user_id
+
 
 def move_to_next(event):
     widget = event.widget

@@ -47,16 +47,31 @@ food_prices = {
     'Chocolate': 15000,
     'Greentea': 15000,
 }
+import tkinter
+from tkinter import *
+from PIL import Image, ImageTk
+import tkinter.ttk as ttk
+import mysql.connector
+from ConectDB import connect, close_connection
+from tkinter import messagebox
+import sys
+
+# Establish the database connection
+connection = connect()
+cursor = connection.cursor()
+
+# Global variables
+user_username = ""
+
 def set_user_author(job_title, username, lbname):
-    global user_author
     global user_username
+    global user_author
     user_author = job_title.lower()  # Convert to lowercase for consistent comparison
     user_username = username
 
-
 # Function to add item to the treeview
 def add_item():
-    global user_username  # Declare user_username as a global variable
+    global user_username
 
     food_name = combo_food.get()
     food_quantity = spinbox_quantity.get()
@@ -69,22 +84,19 @@ def add_item():
     mytree.insert('', 'end', values=(table_number, food_name, food_price, food_quantity, food_price * int(food_quantity)))
 
     # Retrieve user_id based on the logged-in username
-    try:
-        cursor.execute("SELECT user_id FROM users WHERE username = %s", (user_username,))
-        result = cursor.fetchone()
-        if result:
-            user_id = result[0]
-        else:
-            raise ValueError("User not found.")
-    except mysql.connector.Error as err:
-        print(f"Error retrieving user_id: {err}")
-        return
 
     # Insert data into the database
     try:
-        query = "INSERT INTO orders (table_number, food_name, food_price, food_quantity) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (table_number, food_name, food_price, food_quantity))
+        query = "INSERT INTO orders ( table_number, status) VALUES ( %s, %s)"
+        cursor.execute(query, ( table_number, 'Pending'))
         connection.commit()
+        order_id = cursor.lastrowid
+
+        # Insert items into order_items table
+        query_items = "INSERT INTO order_items (order_id, item_name, quantity, price) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query_items, (order_id, food_name, food_quantity, food_price))
+        connection.commit()
+
         print("Data inserted into the database.")
     except mysql.connector.Error as err:
         print(f"Error: {err}")
@@ -92,13 +104,13 @@ def add_item():
 # Function to submit order
 def submit_order():
     # Get the table number
+
+
     table_number = combo_table.get()
 
     # Insert order into orders table
-    cursor.execute("INSERT INTO orders (table_number) VALUES (%s)", (table_number,))
+    cursor.execute("INSERT INTO orders (table_number, status) VALUES (%s, %s)", (table_number, 'Pending'))
     connection.commit()
-
-    # Get the order_id of the newly inserted order
     order_id = cursor.lastrowid
 
     # Iterate over items in mytree and insert into order_items table
@@ -142,6 +154,11 @@ for col in columns:
 #remove front ground of the label
 # remove black gorund from text
 
+job_title = sys.argv[1].lower() if len(sys.argv) > 1 else "default"
+username = sys.argv[2] if len(sys.argv) > 2 else "Guest"
+user_id = sys.argv[3] if len(sys.argv) > 3 else "Guest"
+welcome_label = tkinter.Label(frm, text=f"Welcome, {username}!", font=('Times New Roman', 16))
+welcome_label.pack()
 lb_wel = tkinter.Label(text="Welcome To Obee Restaurant", fg="black" )
 lb_wel.configure(bg='#008000')
 lb_wel.configure(fg='Black')
@@ -203,6 +220,7 @@ button_add.place(x="1200", y="100")
 
 button_confirm = tkinter.Button(text="Confirm Order", command=submit_order)
 button_confirm.place(x="1200", y="500")
+
 
 
 # Table number ComboBox
