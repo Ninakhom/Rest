@@ -7,6 +7,7 @@ import tkinter.ttk as ttk
 import mysql.connector  # Import the MySQL connector module
 from ConectDB import connect, close_connection
 from tkinter import messagebox
+import sys
 
 connection = connect()
 cursor = connection.cursor()
@@ -46,9 +47,17 @@ food_prices = {
     'Chocolate': 15000,
     'Greentea': 15000,
 }
+def set_user_author(job_title, username, lbname):
+    global user_author
+    global user_username
+    user_author = job_title.lower()  # Convert to lowercase for consistent comparison
+    user_username = username
+
 
 # Function to add item to the treeview
 def add_item():
+    global user_username  # Declare user_username as a global variable
+
     food_name = combo_food.get()
     food_quantity = spinbox_quantity.get()
     table_number = combo_table.get()
@@ -58,6 +67,18 @@ def add_item():
 
     # Insert item into the treeview
     mytree.insert('', 'end', values=(table_number, food_name, food_price, food_quantity, food_price * int(food_quantity)))
+
+    # Retrieve user_id based on the logged-in username
+    try:
+        cursor.execute("SELECT user_id FROM users WHERE username = %s", (user_username,))
+        result = cursor.fetchone()
+        if result:
+            user_id = result[0]
+        else:
+            raise ValueError("User not found.")
+    except mysql.connector.Error as err:
+        print(f"Error retrieving user_id: {err}")
+        return
 
     # Insert data into the database
     try:
@@ -187,6 +208,7 @@ button_confirm.place(x="1200", y="500")
 combo_table = ttk.Combobox(frm)
 combo_table['values'] = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
 combo_table.place(x="600", y="100")
+
 
 # Food ComboBox
 combo_food = ttk.Combobox(frm)
