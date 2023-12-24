@@ -1,14 +1,12 @@
 
-
-
 #import 
 import tkinter 
-
 from tkinter import *
 from PIL import Image, ImageTk
 import tkinter.ttk as ttk
 import mysql.connector  # Import the MySQL connector module
 from ConectDB import connect, close_connection
+from tkinter import messagebox
 
 connection = connect()
 cursor = connection.cursor()
@@ -168,13 +166,12 @@ button_add = tkinter.Button(text="Add Item", command=add_item)
 button_add.place(x="1200", y="100")
 
 button_confirm = tkinter.Button(text="Confirm Order", command=submit_order)
-button_confirm.place(x="1200", y="150")
+button_confirm.place(x="1200", y="500")
 
 # Table number ComboBox
 combo_table = ttk.Combobox(frm)
 combo_table['values'] = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
 combo_table.place(x="600", y="100")
-
 
 # Food ComboBox
 combo_food = ttk.Combobox(frm)
@@ -190,7 +187,6 @@ frm.mainloop()
 
 # Close the database connection when the tkinter window is closed
 frm.protocol("WM_DELETE_WINDOW", lambda: [close_connection(conn), frm.destroy()])
-
 #treeview
 columns = ('food_name' , 'food_price')
 mytree = ttk.Treeview(frm , columns = columns , show = "headings") 
@@ -198,7 +194,8 @@ mytree.place(x = "500" , y = "150" , width ="400", height = "300")
 
 mytree.heading('food_name', text='food_name')
 mytree.heading('food_price', text='food_price')
-frm.mainloop()
 
+
+frm.mainloop()
 
 
