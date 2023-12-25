@@ -3,9 +3,6 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from ConectDB import connect, close_connection
 
-
-
-
 connection = connect()
 cursor = connection.cursor()
 
@@ -20,6 +17,16 @@ def get_orders():
     close_connection(connection)
     return orders
 
+def calculate_total_amount(order_id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT SUM(quantity * price) FROM order_items WHERE order_id = %s", (order_id,))
+    total_amount = cursor.fetchone()[0]
+
+    close_connection(connection)
+    return total_amount
+
 def update_order_status(order_id):
     connection = connect()
     if connection is None:
@@ -27,6 +34,11 @@ def update_order_status(order_id):
 
     cursor = connection.cursor()
     cursor.execute("UPDATE orders SET status = 'Completed' WHERE order_id = %s", (order_id,))
+
+    # Insert data into the bills table
+    total_amount = calculate_total_amount(order_id)
+    cursor.execute("INSERT INTO bills (order_id, total_amount) VALUES (%s, %s)", (order_id, total_amount))
+
     connection.commit()
     close_connection(connection)
     display_orders()

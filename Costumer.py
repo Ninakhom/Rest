@@ -199,6 +199,8 @@ button_add.place(x="1700", y="100")
 button_confirm = tkinter.Button(text="Confirm Order", command=submit_order)
 button_confirm.place(x="1700", y="500")
 
+button_update = tkinter.Button(text="Confirm Order", command=submit_order)
+button_update.place(x="1700", y="500")
 # Table number ComboBox
 combo_table = ttk.Combobox(frm)
 combo_table['values'] = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
