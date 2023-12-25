@@ -49,7 +49,7 @@ def cancel():
 # GUI setup
 frm = tk.Tk()
 frm.geometry("1166x718")
-frm.title("Employee Information")
+frm.title("RegisterInformation")
 
 # Entry widgets for employee details
 
@@ -100,7 +100,7 @@ cbb.config(font=("Times New Roman", 16))
 cbb['values'] = ('Admin', 'Bill', 'Chef',)
 
 # Button to insert employee information
-button_insert_employee = tk.Button(frm, text="Insert Employee", command=insert_employee)
+button_insert_employee = tk.Button(frm, text="Register", command=insert_employee)
 button_insert_employee.place(x=550,y= 670)
 
 button_cancel = tk.Button(frm, text="Cancel", command=cancel)

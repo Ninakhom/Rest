@@ -1,6 +1,7 @@
 # from ConnectDB import create_connection, close_connection, get_cursor
 # conn = create_connection()
 # cursor = get_cursor(conn)
+from tkinter import ttk
 from code import interact
 import tkinter
 from tkinter import messagebox
@@ -8,52 +9,56 @@ import os
 from PIL import Image, ImageTk
 from ConectDB import connect, close_connection
 import os
+import mysql.connector as mysql
 frm = tkinter.Tk()
 frm.geometry("1166x718")
 frm.title("Login")
 
 connection = connect()
 cursor = connection.cursor()
-
-
-def login():
-    user = entry_username.get()
-    password = entry_password.get()
-
-    sql = "SELECT user_id, username, role FROM users WHERE username=%s AND password=%s"
-    cursor.execute(sql, (user, password))
-    user_info = cursor.fetchone()
-
-    if user_info is None:
-        messagebox.showinfo("Error", "Sorry, your username or password is incorrect")
-    else:
-        user_id, username, role = user_info
-
-        # Store user information globally for access in other parts of the program
-        set_user_info(user_id, username, role)
-        user_author = role  # Replace this with your actual logic to determine the user's role
-        name=username
-        userid=user_id
-        print(userid)
-        close_connection(connection)
-        frm.destroy()
-        os.system(f"python costumer.py {role} {username} {user_id}")
-
-        # Add your logic for what happens after a successful login here
-        return user_author, role,name,username,user_id,userid
-
-def set_user_info(user_id, username, role):
-    global user_author
-    user_author = role
-    global name
-    name=username
 bg_frame=Image.open('images\\bg.jpg')
 photo =ImageTk.PhotoImage(bg_frame)
 bg_panel=tkinter.Label(frm,image=photo)
 
-def regisform():
+def insert_employee():
+    fname = entry_username.get()
+    lname = entry_password.get()
+    job="tomer"
+
+    connection = connect()
+
+    if connection:
+        try:
+            cursor = connection.cursor()
+
+            # SQL query to insert an employee into the users table
+            sql_query = "INSERT INTO users (username, password, role) VALUES (%s, %s, %s)"
+            values = (fname, lname, job,)
+
+            # Execute the query
+            cursor.execute(sql_query, values)
+
+            # Commit the changes to the database
+            connection.commit()
+
+            messagebox.showinfo("Success", "Employee information inserted successfully!")
+
+        except mysql.Error as err:
+            messagebox.showerror("Error", f"Error: {err}")
+
+        finally:
+            # Close the cursor and connection
+            if cursor:
+                cursor.close()
+
+            close_connection(connection)
+
+
+def cancel():
     frm.destroy()
-    os.system(f"python register.py ")
+    os.system("python login.py")
+
+
 
 def move_to_next(event):
     widget = event.widget
@@ -108,13 +113,14 @@ username_icon_label = tkinter.Label(lgn_frame, image=photo, bg='#040405')
 username_icon_label.image = photo
 username_icon_label.place(x=550, y=332)
 
+
 lgn_button = Image.open('images\\btn1.png')
 photo = ImageTk.PhotoImage(lgn_button)
 lgn_button_label = tkinter.Label(lgn_frame, image=photo, bg='#040405')
 lgn_button_label.image = photo
 lgn_button_label.place(x=550, y=450)
-login = tkinter.Button(lgn_button_label, text='LOGIN', font=("yu gothic ui", 13, "bold"), width=25, bd=0,
-                            bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white',command=login)
+login = tkinter.Button(lgn_button_label, text='Register', font=("yu gothic ui", 13, "bold"), width=25, bd=0,
+                            bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white',command=insert_employee)
 login.place(x=20, y=10)
 
 
@@ -124,8 +130,8 @@ register_button_label = tkinter.Label(lgn_frame, image=register_photo, bg='#0404
 register_button_label.image = register_photo
 register_button_label.place(x=550, y=500)
 
-register_button = tkinter.Button(register_button_label, text='REGISTER', font=("yu gothic ui", 13, "bold"), width=25, bd=0,
-                                 bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white',command=regisform)
+register_button = tkinter.Button(register_button_label, text='Cancel', font=("yu gothic ui", 13, "bold"), width=25, bd=0,
+                                 bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white',command=cancel)
 register_button.place(x=20, y=10)
 password_label = tkinter.Label(lgn_frame, text="Password", bg="#040405", fg="#4f4e4d",
                             font=("yu gothic ui", 13, "bold"))
