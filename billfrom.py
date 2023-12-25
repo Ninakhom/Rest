@@ -103,9 +103,6 @@ if orders:
 
 treeview.pack()
 
-generate_bill_button = tk.Button(frm, text="Generate Bill", command=generate_bill)
-generate_bill_button.pack()
-
 payment_label = tk.Label(frm, text="Enter Payment Amount:")
 payment_label.pack()
 
