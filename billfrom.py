@@ -5,102 +5,97 @@ from ConectDB import connect, close_connection
 connection = connect()
 cursor = connection.cursor()
 
-def fetch_orders():
+def fetch_bills():
     try:
         connection = connect()
         cursor = connection.cursor()
 
         query = """
-        SELECT orders.order_id, orders.user_id, orders.table_number, SUM(order_items.quantity) AS total_quantity,
-               SUM(order_items.quantity * order_items.price) AS total_price
-        FROM orders
-        JOIN order_items ON orders.order_id = order_items.order_id
-        GROUP BY orders.order_id, orders.user_id, orders.table_number
+        SELECT bill_id, order_id, total_amount, payment_status, bill_date
+        FROM bills
         """
         cursor.execute(query)
-        orders = cursor.fetchall()
-        return orders
+        bills = cursor.fetchall()
+        return bills
 
     except Exception as err:
-        messagebox.showerror("Error", f"Error fetching orders: {err}")
+        messagebox.showerror("Error", f"Error fetching bills: {err}")
         return None
 
     finally:
         close_connection(connection)
 
-def generate_bill(order_id, total_price, money_amount):
-    bill_window = tk.Toplevel(frm)
-    bill_window.title(f"Bill for Order ID: {order_id}")
+def display_bills():
+    bills = fetch_bills()
+    if bills:
+        for row in bills:
+            treeview.insert("", "end", values=row)
 
-    bill_content = f"Order ID: {order_id}\n\n"
-    bill_content += f"{'Item': <20}{'Quantity': <10}{'Price'}\n"
+def generate_receipt(bill_id, order_id, total_amount, payment_amount, change):
+    receipt_content = f"Receipt for Bill ID: {bill_id}\n"
+    receipt_content += f"Order ID: {order_id}\n"
+    receipt_content += f"Total Amount: ${total_amount:.2f}\n"
+    receipt_content += f"Payment Amount: ${payment_amount:.2f}\n"
+    receipt_content += f"Change: ${change:.2f}\n"
 
-    try:
-        connection = connect()
-        cursor = connection.cursor()
+    receipt_window = tk.Toplevel(frm)
+    receipt_window.title("Receipt")
 
-        query = "SELECT item_name, quantity, price FROM order_items WHERE order_id = %s"
-        cursor.execute(query, (order_id,))
-        order_items = cursor.fetchall()
-
-        for item in order_items:
-            item_name, quantity, price = item
-            bill_content += f"{item_name: <20}{quantity: <10}${float(price) * quantity:,.2f}\n"
-
-        bill_content += f"\nTotal: ${float(total_price):,.2f}\n"
-        bill_content += f"Money Amount: ${float(money_amount):,.2f}\n"
-        change = float(money_amount) - float(total_price)
-        bill_content += f"Change: ${change:,.2f}"
-
-        bill_text = tk.Text(bill_window, height=20, width=40)
-        bill_text.insert(tk.END, bill_content)
-        bill_text.pack()
-
-    except Exception as e:
-        messagebox.showerror("Error", f"Error fetching order items: {e}")
-
-    finally:
-        close_connection(connection)
+    receipt_text = tk.Text(receipt_window, height=10, width=40)
+    receipt_text.insert(tk.END, receipt_content)
+    receipt_text.pack()
 
 def pay_money():
     try:
         money_amount = float(payment_entry.get())
         selected_item = treeview.focus()
         if not selected_item:
-            messagebox.showwarning("No Selection", "Please select an order to process payment.")
+            messagebox.showwarning("No Selection", "Please select a bill to process payment.")
             return
 
-        selected_order = treeview.item(selected_item, 'values')
-        order_id, user_id, table_number, total_quantity, total_price = selected_order[:5]
+        selected_bill = treeview.item(selected_item, 'values')
+        bill_id, order_id, total_amount, payment_status, bill_date = selected_bill
 
-        if money_amount < float(total_price):
+        # Convert total_amount to float before comparison
+        total_amount = float(total_amount)
+
+        if payment_status == 'Paid':
+            messagebox.showinfo("Payment Status", "This bill has already been paid.")
+            return
+
+        if money_amount < total_amount:
             messagebox.showerror("Error", "Insufficient payment amount.")
         else:
-            result = messagebox.askyesno("Generate Bill", "Do you want to generate a bill?")
+            result = messagebox.askyesno("Generate Bill", "Do you want to generate a receipt?")
             if result:
-                generate_bill(order_id, total_price, money_amount)
+                change = money_amount - total_amount
+                generate_receipt(bill_id, order_id, total_amount, money_amount, change)
 
-            change = money_amount - float(total_price)
-            messagebox.showinfo("Payment Successful", f"Payment successful!\nChange: ${change:,.2f}")
+            # Update the payment status to 'Paid' in the "bills" table
+            update_payment_status_query = "UPDATE bills SET payment_status = 'Paid' WHERE bill_id = %s"
+            cursor.execute(update_payment_status_query, (bill_id,))
+            connection.commit()
+
+            change = money_amount - total_amount
+            messagebox.showinfo("Payment Successful", f"Payment successful!\nChange: ${change:.2f}")
+
+        # Refresh the displayed bills after payment
+        treeview.delete(*treeview.get_children())
+        display_bills()
 
     except ValueError:
         messagebox.showerror("Error", "Invalid payment amount. Please enter a valid number.")
 
 frm = tk.Tk()
-frm.title("Order Data")
+frm.title("Bill Data")
 
-columns = ('Order ID', 'User ID', 'Table Number', 'Quantity', 'Total Price')
-global treeview
+columns = ('Bill ID', 'Order ID', 'Total Amount', 'Payment Status', 'Bill Date')
 treeview = ttk.Treeview(frm, columns=columns, show="headings")
 
 for col in columns:
     treeview.heading(col, text=col)
 
-orders = fetch_orders()
-if orders:
-    for row in orders:
-        treeview.insert("", "end", values=row)
-
+display_bills()
 treeview.pack()
 
 payment_label = tk.Label(frm, text="Enter Payment Amount:")

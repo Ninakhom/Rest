@@ -14,7 +14,8 @@ frm.title("Login")
 
 connection = connect()
 cursor = connection.cursor()
-
+frm.resizable(0,0)
+frm.state('zoomed')
 
 def login():
     user = entry_username.get()
@@ -58,8 +59,7 @@ def regisform():
 def move_to_next(event):
     widget = event.widget
     widget.tk_focusNext().focus()
-frm.resizable(0,0)
-frm.state('zoomed')
+
 bg_frame=Ige = photo
 bg_panel.pack(fill='both',expand='yes')
 lgn_frame = tkinter.Frame(frm, bg='#040405', width=950, height=600)
