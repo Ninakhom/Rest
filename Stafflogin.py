@@ -19,22 +19,25 @@ def login():
     user = entry_username.get()
     password = entry_password.get()
 
-    sql = "SELECT user_id, username, role FROM users WHERE username=%s AND password=%s"
+    sql = "SELECT staff_id,staff_name,position FROM staff WHERE staff_name=%s AND password=%s"
     cursor.execute(sql, (user, password))
     user_info = cursor.fetchone()
 
     if user_info is None:
         messagebox.showinfo("Error", "Sorry, your username or password is incorrect")
     else:
-        user_id, username, role = user_info
+        staff_id, staff_name, position = user_info
 
         # Store user information globally for access in other parts of the program
         close_connection(connection)
         frm.destroy()
-        os.system(f"python costumer.py {role} {username} {user_id}")
+
+        # Pass user information to the dash script as command-line arguments
+        os.system(f"python dash.py {position} {staff_name} {staff_id}")
 
         # Add your logic for what happens after a successful login here
-        return 
+        return
+
 
 bg_frame=Image.open('images\\bg.jpg')
 photo =ImageTk.PhotoImage(bg_frame)

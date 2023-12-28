@@ -2,10 +2,17 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from ConectDB import connect, close_connection
+from datetime import datetime
 
 connection = connect()
 cursor = connection.cursor()
 
+
+def update_label():
+
+    current_datetime = datetime.now()  
+    lbdate.config(text=current_datetime.strftime("%d-%m-%Y %H:%M:%S"),font=("Helvetica", 16))
+    lbdate.after(1000, update_label)
 def get_orders():
     connection = connect()
     if connection is None:
@@ -64,6 +71,8 @@ frm = tk.Tk()
 frm.state('zoomed')
 frm.geometry('1166x718')
 frm.title('Kitchen Orders')
+lgn_frame = tk.Frame(frm, bg='#508CF7', width=2000, height=80)
+lgn_frame.place(x=0, y=0)
 
 # Create a Treeview widget
 columns = ("Order ID", "Table", "Status", "Item", "Quantity")
@@ -72,14 +81,22 @@ for col in columns:
     tree.heading(col, text=col)
     tree.column(col, width=150)
 
-tree.pack()
 
+
+tree.place(x=500,y=200)
+welcome_label = tk.Label(frm, text=f"Kitchen Page", font=('Times New Roman', 26),bg='#508CF7')
+welcome_label.place(x=800,y=20)
+
+current_datetime = datetime.now()
+lbdate=tk.Label(frm,text=current_datetime,bg='#CFD5E2')
+lbdate.place(x=400,y=300)
+lbdate.place(x=800,y=100)
 # Display orders initially
 display_orders()
 
 # Bind the click event to the on_tree_click function
 tree.bind("<ButtonRelease-1>", on_tree_click)
-
+frm.config(bg='#CFD5E2')
 frm.resizable(0, 0)
 frm.state('zoomed')
 
@@ -88,4 +105,5 @@ frm.state('zoomed')
 # Add any additional UI elements if needed
 
 # Start the Tkinter main loop
+update_label()
 frm.mainloop()

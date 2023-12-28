@@ -17,15 +17,11 @@ def open_menuitems_management():
 
 def open_orderchef():
     frm1.destroy()
-    os.system("python kitchen.py")
-
-def open_cusorder():
-    frm1.destroy()
-    os.system("python costumer.py")
+    os.system(f"python kitchen.py {staff_id} {staff_name}")
 
 def open_bill():
     frm1.destroy()
-    os.system("python bill.py")
+    os.system(f"python billfrom.py {staff_id} {staff_name}")
 
 # Exit the program
 def on_exit():
@@ -33,7 +29,7 @@ def on_exit():
 
 def hide_menu_items():
     # Convert user_author to lowercase for case-insensitive comparison
-    lower_user_author = user_author.lower()
+    lower_user_author = position.lower()
 
     # Hide or disable menu items based on user_author
     if lower_user_author == "chef":
@@ -52,16 +48,26 @@ def hide_menu_items():
         edit_menu.entryconfigure("Order", state='disabled')
         Bill_menu.entryconfigure("Bill", state='normal')
 
-def set_user_author(job_title, username, lbname):
+def set_user_author(position, username, lbname):
     global user_author
     global user_username
-    user_author = job_title.lower()  # Convert to lowercase for consistent comparison
+    user_author = position.lower()  # Convert to lowercase for consistent comparison
     user_username = username
-    lbname.config(text=f"Welcome, {user_username}!")
+    lbname.config(text=f"Welcome, {staff_name}!")
+    
 
-# Retrieve the job_title and username from command-line arguments
-job_title = sys.argv[1].lower() if len(sys.argv) > 1 else "default"
-username = sys.argv[2] if len(sys.argv) > 2 else "Guest"
+
+if len(sys.argv) >= 4:
+    position = sys.argv[1]
+    staff_name = sys.argv[2]
+    staff_id = sys.argv[3]
+    
+    # Additional processing with position, staff_name, and staff_id
+    
+    # Call bill.py with the necessary data
+    
+else:
+    print("Insufficient command-line arguments.")
 
 # Main code for dash window
 frm1 = tk.Tk()
@@ -69,16 +75,12 @@ frm1.geometry('1500x1000')
 frm1.title('DashBord')
 
 # Label to display welcome message
-welcome_label = tk.Label(frm1, text=f"Welcome, {username}!", font=('Times New Roman', 16))
+welcome_label = tk.Label(frm1, text=f"Welcome, {staff_name}!", font=('Times New Roman', 16))
 welcome_label.pack()
 
 frm1.resizable(0, 0)
 frm1.state('zoomed')
-bg_frame = Image.open('images\\pexels-chan-walrus-958545 (1).jpg')
-photo = ImageTk.PhotoImage(bg_frame)
-bg_panel = tk.Label(frm1, image=photo)
-bg_panel.image = photo
-bg_panel.pack(fill='both', expand='yes')
+
 
 menu_bar = tk.Menu(frm1)
 menu_bar.config(font=('Times New Roman', 16))
@@ -95,14 +97,14 @@ edit_menu.add_command(label="Order", command=open_orderchef)
 
 Bill_menu = tk.Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Bill", menu=Bill_menu)
-Bill_menu.add_command(label="Bill", )
-Bill_menu.add_command(label="CusOrder", command=open_cusorder)
+Bill_menu.add_command(label="Bill", command=open_bill)
+
 
 lbname = tk.Label(frm1, text="")
 lbname.pack()
 hide_menu_items()
 
 # Pass lbname to the set_user_author function
-set_user_author(job_title, username, lbname)
-
+set_user_author(position, staff_name, lbname)
+print(position)
 frm1.mainloop()

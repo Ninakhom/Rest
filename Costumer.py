@@ -10,8 +10,9 @@ import sys
 from PIL import Image, ImageTk
 connection = connect()
 cursor = connection.cursor()
-job_title = sys.argv[1].lower() if len(sys.argv) > 1 else "default"
+
 username = sys.argv[2] if len(sys.argv) > 2 else "Guest"
+user_id = sys.argv[3] if len(sys.argv) > 3 else "0"  # Set a default value if not provided
 # ... (rest of your code)
 
 # Create the main window
@@ -54,7 +55,7 @@ food_prices = {
     'Chocolate': 15000,
     'Greentea': 15000,
 }
-user_id = sys.argv[3] if len(sys.argv) > 3 else "0"  # Set a default value if not provided
+
 def set_user_author(job_title, username, lbname):
     global user_author
     global user_username
@@ -64,7 +65,7 @@ def set_user_author(job_title, username, lbname):
 
 # Function to add item to the treeview
 def add_item():
-    print(user_id)
+    
     global user_username  # Declare user_username as a global variable
 
     food_name = combo_food.get()
@@ -109,9 +110,53 @@ def submit_order():
     tkinter.messagebox.showinfo("Order Submitted", "Order submitted successfully.")
     mytree.delete(*mytree.get_children())  # Clear the mytree
 
+def cancel():
+    selected_item = mytree.selection()
+    if selected_item:
+        mytree.delete(selected_item)
+def update_selected_item(event):
+    # Get the selected item
+    selected_item = mytree.selection()
 
-user_author = sys.argv[1].lower() if len(sys.argv) > 1 else "default"
-username = sys.argv[2] if len(sys.argv) > 2 else "Guest"
+    if selected_item:
+        # Get the current values of the selected item
+        current_values = mytree.item(selected_item, 'values')
+
+        # Create a new Toplevel window for editing
+        edit_window = tkinter.Toplevel(frm)
+
+        # Add Combo box for food name
+        tkinter.Label(edit_window, text="Food Name:").grid(row=1, column=0, padx=5, pady=5)
+        combo_food_var = tkinter.StringVar(value=current_values[1])
+        combo_food = ttk.Combobox(edit_window, textvariable=combo_food_var)
+        combo_food['values'] = ('Hamburger', 'Sapageti', 'Kapao', 'Phutthai', 'Kaophut', 'Papayapokpok', 'Coke', 'Chocolate', 'Greentea')
+        combo_food.grid(row=1, column=1, padx=5, pady=5)
+
+        # Add Entry widget for quantity
+        tkinter.Label(edit_window, text="Quantity:").grid(row=3, column=0, padx=5, pady=5)
+        entry_quantity_var = tkinter.StringVar(value=current_values[3])
+        entry_quantity = tkinter.Entry(edit_window, textvariable=entry_quantity_var)
+        entry_quantity.grid(row=3, column=1, padx=5, pady=5)
+
+        # Function to update the values in mytree when the "Update" button is clicked
+        def update_values():
+            # Get the updated values from the Combo box and Entry widget
+            updated_food_name = combo_food_var.get()
+            updated_quantity = entry_quantity_var.get()
+
+            # Update the values in mytree
+            mytree.item(selected_item, values=(current_values[0], updated_food_name, food_prices[updated_food_name], updated_quantity, int(food_prices[updated_food_name]) * int(updated_quantity)))
+
+            # Destroy the Toplevel window
+            edit_window.destroy()
+
+        # Add an "Update" button to apply the changes
+        tkinter.Button(edit_window, text="Update", command=update_values).grid(row=4, columnspan=2, pady=10)
+
+
+
+
+
 
 # Image paths
 img_paths = ["hamburger.jpg", "Sapageti.jpg.jpg", "kapao.jpg.", "phutthai.jpg", "kaophut.jpg", "papayapokpok.jpg",
@@ -129,13 +174,11 @@ for i, image in enumerate(images):
 columns = ('table_number', 'food_name', 'food_price', 'food_quantity', 'total_cost')
 mytree = ttk.Treeview(frm, columns=columns, show="headings")
 mytree.place(x="1000", y="150", width="800", height="300")
-
+mytree.bind("<Double-Button-1>", update_selected_item)
 for col in columns:
     mytree.heading(col, text=col)
 
-# GUI labels
-#remove front ground of the label
-# remove black gorund from text
+
 
 lb_wel = tkinter.Label(text="Welcome To Obee Restaurant", fg="black", )
 lb_wel.configure(bg='#508CF7')
@@ -194,13 +237,14 @@ label_addquantity.place(x="1500", y="100")
 
 # Create button + hamburger
 button_add = tkinter.Button(text="Add Item", command=add_item)
-button_add.place(x="1700", y="100")
+button_add.place(x="1670", y="100")
 
 button_confirm = tkinter.Button(text="Confirm Order", command=submit_order)
 button_confirm.place(x="1700", y="500")
 
-button_update = tkinter.Button(text="Confirm Order", command=submit_order)
-button_update.place(x="1700", y="500")
+
+button_cancel = tkinter.Button(text="Cancel", command=cancel)
+button_cancel.place(x="1750", y="100")
 # Table number ComboBox
 combo_table = ttk.Combobox(frm)
 combo_table['values'] = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
