@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from ConectDB import connect, close_connection
-
+import sys
 connection = connect()
 cursor = connection.cursor()
 
@@ -72,8 +72,8 @@ def pay_money():
                 generate_receipt(bill_id, order_id, total_amount, money_amount, change)
 
             # Update the payment status to 'Paid' in the "bills" table
-            update_payment_status_query = "UPDATE bills SET payment_status = 'Paid' WHERE bill_id = %s"
-            cursor.execute(update_payment_status_query, (bill_id,))
+            update_payment_status_query = "UPDATE bills SET payment_status = 'Paid', staff_id = %s WHERE bill_id = %s"
+            cursor.execute(update_payment_status_query, (bill_id, staff_id))
             connection.commit()
 
             change = money_amount - total_amount
@@ -97,6 +97,13 @@ for col in columns:
 
 display_bills()
 treeview.pack()
+
+if len(sys.argv) >= 4:
+    position = sys.argv[1]
+    staff_name = sys.argv[2]
+    staff_id = sys.argv[3]
+    print(f"Position: {position}, Staff Name: {staff_name}, Staff ID: {staff_id}")
+    print("Print statement reached.")
 
 payment_label = tk.Label(frm, text="Enter Payment Amount:")
 payment_label.pack()

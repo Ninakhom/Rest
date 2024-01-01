@@ -3,6 +3,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from ConectDB import connect, close_connection
 from datetime import datetime
+import sys
 
 connection = connect()
 cursor = connection.cursor()
@@ -65,6 +66,13 @@ def display_orders():
         order_id, table_number, order_date, status, item_name, quantity = order
 
         tree.insert("", "end", values=(order_id, table_number, status, item_name, quantity))
+
+if len(sys.argv) >= 4:
+    position = sys.argv[1]
+    staff_name = sys.argv[2]
+    staff_id = sys.argv[3]
+    print(f"Position: {position}, Staff Name: {staff_name}, Staff ID: {staff_id}")
+    print("Print statement reached.")
 
 # Set up the main window
 frm = tk.Tk()

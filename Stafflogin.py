@@ -32,8 +32,11 @@ def login():
         close_connection(connection)
         frm.destroy()
 
-        # Pass user information to the dash script as command-line arguments
-        os.system(f"python dash.py {position} {staff_name} {staff_id}")
+        if position=='Casheir':# Pass user information to the dash script as command-line arguments
+            os.system(f"python billfrom.py {position} {staff_name} {staff_id}")
+        elif position=='Chef':
+            os.system(f"python kitchen.py {position} {staff_name} {staff_id}")
+
 
         # Add your logic for what happens after a successful login here
         return
@@ -108,16 +111,6 @@ login = tkinter.Button(lgn_button_label, text='LOGIN', font=("yu gothic ui", 13,
                             bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white',command=login)
 login.place(x=20, y=10)
 
-
-register_button_image = Image.open('images\\btn1.png')
-register_photo = ImageTk.PhotoImage(register_button_image)
-register_button_label = tkinter.Label(lgn_frame, image=register_photo, bg='#040405')
-register_button_label.image = register_photo
-register_button_label.place(x=550, y=500)
-
-register_button = tkinter.Button(register_button_label, text='REGISTER', font=("yu gothic ui", 13, "bold"), width=25, bd=0,
-                                 bg='#3047ff', cursor='hand2', activebackground='#3047ff', fg='white',command=regisform)
-register_button.place(x=20, y=10)
 password_label = tkinter.Label(lgn_frame, text="Password", bg="#040405", fg="#4f4e4d",
                             font=("yu gothic ui", 13, "bold"))
 password_label.place(x=550, y=380)

@@ -19,6 +19,7 @@ def open_orderchef():
     frm1.destroy()
     os.system(f"python kitchen.py {staff_id} {staff_name}")
 
+
 def open_bill():
     frm1.destroy()
     os.system(f"python billfrom.py {staff_id} {staff_name}")
@@ -61,6 +62,7 @@ if len(sys.argv) >= 4:
     position = sys.argv[1]
     staff_name = sys.argv[2]
     staff_id = sys.argv[3]
+    
     
     # Additional processing with position, staff_name, and staff_id
     
