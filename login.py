@@ -9,7 +9,7 @@ import os
 frm = tkinter.Tk()
 frm.geometry("1166x718")
 frm.title("Login")
-
+frm.config(bg='#CFD5E2')
 connection = connect()
 cursor = connection.cursor()
 frm.resizable(0,0)
@@ -19,26 +19,24 @@ def login():
     user = entry_username.get()
     password = entry_password.get()
 
-    sql = "SELECT user_id, username, role FROM users WHERE username=%s AND password=%s"
+    sql = "SELECT user_id, username FROM users WHERE username=%s AND password=%s"
     cursor.execute(sql, (user, password))
     user_info = cursor.fetchone()
 
     if user_info is None:
         messagebox.showinfo("Error", "Sorry, your username or password is incorrect")
     else:
-        user_id, username, role = user_info
+        user_id, username = user_info
 
         # Store user information globally for access in other parts of the program
         close_connection(connection)
         frm.destroy()
-        os.system(f"python costumer.py {role} {username} {user_id}")
+        os.system(f"python costumer.py {username} {user_id}")
 
         # Add your logic for what happens after a successful login here
         return 
 
-bg_frame=Image.open('images\\bg.jpg')
-photo =ImageTk.PhotoImage(bg_frame)
-bg_panel=tkinter.Label(frm,image=photo)
+
 
 def regisform():
     frm.destroy()
@@ -48,8 +46,7 @@ def move_to_next(event):
     widget = event.widget
     widget.tk_focusNext().focus()
 
-bg_frame=Ige = photo
-bg_panel.pack(fill='both',expand='yes')
+
 lgn_frame = tkinter.Frame(frm, bg='#040405', width=950, height=600)
 lgn_frame.place(x=500, y=230)
 frm.txt = "WELCOME"
@@ -60,11 +57,11 @@ frm.heading = tkinter.Label(lgn_frame, text=frm.txt, font=('yu gothic ui', 25, "
 frm.heading.place(x=80, y=30, width=300, height=30)
 
 
-side_image = Image.open('images\\vector.png')
+side_image = Image.open('images\\3.png')
 photo = ImageTk.PhotoImage(side_image)
 side_image_label = tkinter.Label(lgn_frame, image=photo, bg='#040405')
 side_image_label.image = photo
-side_image_label.place(x=5, y=100)
+side_image_label.place(x=70, y=150)
 
 
 sign_in_image = Image.open('images\\hyy.png')

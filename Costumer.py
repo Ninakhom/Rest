@@ -10,9 +10,15 @@ import sys
 from PIL import Image, ImageTk
 connection = connect()
 cursor = connection.cursor()
+c1='#020f12'
+c2='#508CF7'
+c3='#508CF7'
+c4='black'
 
-username = sys.argv[2] if len(sys.argv) > 2 else "Guest"
-user_id = sys.argv[3] if len(sys.argv) > 3 else "0"  # Set a default value if not provided
+
+username = sys.argv[1] if len(sys.argv) > 1 else "Guest"
+user_id = sys.argv[2] if len(sys.argv) > 2 else "0"
+
 # ... (rest of your code)
 
 # Create the main window
@@ -236,14 +242,47 @@ label_addquantity = tkinter.Label(text="Choose Quantity", fg="black")
 label_addquantity.place(x="1500", y="100")
 
 # Create button + hamburger
-button_add = tkinter.Button(text="Add Item", command=add_item)
+button_add = tkinter.Button(text="Add Item", command=add_item, bg=c2,
+    fg=c4,
+    activebackground=c3,
+    activeforeground=c4,
+    highlightthickness=2,
+    highlightbackground=c2,
+    highlightcolor='white',
+    
+    border=5,
+    cursor='hand1',
+    
+    )
 button_add.place(x="1670", y="100")
 
-button_confirm = tkinter.Button(text="Confirm Order", command=submit_order)
+button_confirm = tkinter.Button(text="Confirm Order", command=submit_order, bg=c2,
+    fg=c4,
+    activebackground=c3,
+    activeforeground=c4,
+    highlightthickness=2,
+    highlightbackground=c2,
+    highlightcolor='white',
+    
+    border=5,
+    cursor='hand1',
+    
+    )
 button_confirm.place(x="1700", y="500")
 
 
-button_cancel = tkinter.Button(text="Cancel", command=cancel)
+button_cancel = tkinter.Button(text="Cancel", command=cancel, bg=c2,
+    fg=c4,
+    activebackground=c3,
+    activeforeground=c4,
+    highlightthickness=2,
+    highlightbackground=c2,
+    highlightcolor='white',
+    
+    border=5,
+    cursor='hand1',
+    
+    )
 button_cancel.place(x="1750", y="100")
 # Table number ComboBox
 combo_table = ttk.Combobox(frm)
