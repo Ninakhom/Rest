@@ -14,7 +14,7 @@ connection = connect()
 cursor = connection.cursor()
 frm.resizable(0,0)
 frm.state('zoomed')
-
+frm.config(bg='#CFD5E2')
 def login():
     user = entry_username.get()
     password = entry_password.get()

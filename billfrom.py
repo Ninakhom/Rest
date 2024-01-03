@@ -77,7 +77,7 @@ def pay_money():
             connection.commit()
 
             change = money_amount - total_amount
-            messagebox.showinfo("Payment Successful", f"Payment successful!\nChange: ${change:.2f}")
+            messagebox.showinfo("Payment Successful", f"Payment successful!\nChange: kip{change:.2f}")
 
         # Refresh the displayed bills after payment
         treeview.delete(*treeview.get_children())
@@ -88,9 +88,16 @@ def pay_money():
 
 frm = tk.Tk()
 frm.title("Bill Data")
+frm.config(bg='#CFD5E2')
+frm.geometry("1200x600")
 
 columns = ('Bill ID', 'Order ID', 'Total Amount', 'Payment Status', 'Bill Date')
 treeview = ttk.Treeview(frm, columns=columns, show="headings")
+#config tree view bg color
+style = ttk.Style()
+style.configure("Treeview", background='#CFD5E2')
+
+
 
 for col in columns:
     treeview.heading(col, text=col)
@@ -107,6 +114,7 @@ if len(sys.argv) >= 4:
 
 payment_label = tk.Label(frm, text="Enter Payment Amount:")
 payment_label.pack()
+payment_label.config(bg='#CFD5E2')
 
 payment_entry = tk.Entry(frm)
 payment_entry.pack()

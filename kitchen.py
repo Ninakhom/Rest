@@ -84,10 +84,14 @@ lgn_frame.place(x=0, y=0)
 
 # Create a Treeview widget
 columns = ("Order ID", "Table", "Status", "Item", "Quantity")
+
 tree = ttk.Treeview(frm, columns=columns, show="headings", height=15)
 for col in columns:
     tree.heading(col, text=col)
     tree.column(col, width=150)
+
+style = ttk.Style()
+
 
 
 
