@@ -4,10 +4,19 @@ from PIL import Image, ImageTk
 from ConectDB import connect, close_connection
 from datetime import datetime
 import sys
-
+from tkinter import ttk, messagebox
+import os
 connection = connect()
 cursor = connection.cursor()
-
+frm = tk.Tk()
+frm.state('zoomed')
+frm.geometry('1166x718')
+frm.title('Kitchen Orders')
+lgn_frame = tk.Frame(frm, bg='#508CF7', width=2000, height=80)
+lgn_frame.place(x=0, y=0)
+lbFrame1 = tk.LabelFrame(frm, text='Kitchen Orders',width=900, height=500,background='#CFD5E2')
+lbFrame1.place(x=500, y=150)
+lbFrame1.config(font=("Times New Roman", 14, "bold"), fg="darkblue")
 
 def update_label():
 
@@ -67,6 +76,18 @@ def display_orders():
 
         tree.insert("", "end", values=(order_id, table_number, status, item_name, quantity))
 
+def Logout():
+    # Ask for confirmation using a messagebox
+    confirmed = messagebox.askyesno("Confirm Logout", "Are you sure you want to logout?")
+
+    if confirmed:
+        # Perform any logout-related actions here
+        print("Logging out...")
+
+        # Optionally, destroy the main Tkinter window
+        frm.destroy()
+        os.system(f"python Stafflogin.py ")
+
 if len(sys.argv) >= 4:
     position = sys.argv[1]
     staff_name = sys.argv[2]
@@ -75,16 +96,10 @@ if len(sys.argv) >= 4:
     print("Print statement reached.")
 
 # Set up the main window
-frm = tk.Tk()
-frm.state('zoomed')
-frm.geometry('1166x718')
-frm.title('Kitchen Orders')
-lgn_frame = tk.Frame(frm, bg='#508CF7', width=2000, height=80)
-lgn_frame.place(x=0, y=0)
+
 
 # Create a Treeview widget
 columns = ("Order ID", "Table", "Status", "Item", "Quantity")
-
 tree = ttk.Treeview(frm, columns=columns, show="headings", height=15)
 for col in columns:
     tree.heading(col, text=col)
@@ -94,14 +109,18 @@ style = ttk.Style()
 
 
 
+c1='#020f12'
+c2='#508CF7'
+c3='#508CF7'
+c4='black'
 
-tree.place(x=500,y=200)
+tree.place(x=70,y=20)
 welcome_label = tk.Label(frm, text=f"Kitchen Page", font=('Times New Roman', 26),bg='#508CF7')
 welcome_label.place(x=800,y=20)
 
 current_datetime = datetime.now()
 lbdate=tk.Label(frm,text=current_datetime,bg='#CFD5E2')
-lbdate.place(x=400,y=300)
+
 lbdate.place(x=800,y=100)
 # Display orders initially
 display_orders()
@@ -112,10 +131,22 @@ frm.config(bg='#CFD5E2')
 frm.resizable(0, 0)
 frm.state('zoomed')
 
-# Add your background image code here
+
 
 # Add any additional UI elements if needed
-
+button_Logout = tk.Button(text="Logout", command=Logout, bg=c2,
+    fg=c4,
+    activebackground=c3,
+    activeforeground=c4,
+    highlightthickness=2,
+    highlightbackground=c2,
+    highlightcolor='white',
+    
+    border=5,
+    cursor='hand1',
+    
+    )
+button_Logout.place(x="1250", y="650")
 # Start the Tkinter main loop
 update_label()
 frm.mainloop()

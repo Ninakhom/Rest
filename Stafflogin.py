@@ -29,17 +29,17 @@ def login():
     else:
         staff_id, staff_name, position = user_info
 
-        # Store user information globally for access in other parts of the program
+  
         close_connection(connection)
         frm.destroy()
 
-        if position=='Casheir':# Pass user information to the dash script as command-line arguments
+        if position=='Casheir':
             os.system(f"python billfrom.py {position} {staff_name} {staff_id}")
         elif position=='Chef':
             os.system(f"python kitchen.py {position} {staff_name} {staff_id}")
 
 
-        # Add your logic for what happens after a successful login here
+
         return
 
 
@@ -58,11 +58,7 @@ frm.heading = tkinter.Label(lgn_frame, text=frm.txt, font=('yu gothic ui', 25, "
 frm.heading.place(x=320, y=30, width=300, height=30)
 
 
-# side_image = Image.open('images\\re.jpg')
-# photo = ImageTk.PhotoImage(side_image)
-# side_image_label = tkinter.Label(lgn_frame, image=photo, bg='#040405')
-# side_image_label.image = photo
-# side_image_label.place(x=5, y=100)
+
 
 
 sign_in_image = Image.open('images\\hyy.png')
@@ -87,7 +83,7 @@ entry_username.place(x=360, y=335, width=270)
 
 username_line = tkinter.Canvas(lgn_frame, width=300, height=2.0, bg="#bdb9b1", highlightthickness=0)
 username_line.place(x=330, y=359)
-        # ===== Username icon =========
+        
 username_icon = Image.open('images\\username_icon.png')
 photo = ImageTk.PhotoImage(username_icon)
 username_icon_label = tkinter.Label(lgn_frame, image=photo, bg='#040405')
@@ -113,7 +109,7 @@ entry_password.place(x=360, y=416, width=244)
 
 password_line = tkinter.Canvas(lgn_frame, width=300, height=2.0, bg="#bdb9b1", highlightthickness=0)
 password_line.place(x=330, y=440)
-        # ======== Password icon ================
+        
 password_icon = Image.open('images\\password_icon.png')
 photo = ImageTk.PhotoImage(password_icon)
 password_icon_label = tkinter.Label(lgn_frame, image=photo, bg='#040405')

@@ -5,7 +5,7 @@ from tkinter import messagebox
 import os
 from PIL import Image, ImageTk
 from ConectDB import connect, close_connection
-import os
+
 frm = tkinter.Tk()
 frm.geometry("1166x718")
 frm.title("Login")
@@ -129,7 +129,4 @@ password_icon_label = tkinter.Label(lgn_frame, image=photo, bg='#040405')
 password_icon_label.image = photo
 password_icon_label.place(x=550, y=414)
 
-
-
-       
 frm.mainloop()

@@ -13,12 +13,14 @@ import mysql.connector as mysql
 frm = tkinter.Tk()
 frm.geometry("1166x718")
 frm.title("Login")
+frm.resizable(0,0)
+frm.state('zoomed')
+frm.config(bg='#CFD5E2')
+
 
 connection = connect()
 cursor = connection.cursor()
-bg_frame=Image.open('images\\bg.jpg')
-photo =ImageTk.PhotoImage(bg_frame)
-bg_panel=tkinter.Label(frm,image=photo)
+
 
 def insert_employee():
     fname = entry_username.get()
@@ -32,8 +34,8 @@ def insert_employee():
             cursor = connection.cursor()
 
             # SQL query to insert an employee into the users table
-            sql_query = "INSERT INTO users (username, password, role) VALUES (%s, %s, %s)"
-            values = (fname, lname, job,)
+            sql_query = "INSERT INTO users (username, password) VALUES (%s, %s)"
+            values = (fname, lname,)
 
             # Execute the query
             cursor.execute(sql_query, values)
@@ -63,10 +65,8 @@ def cancel():
 def move_to_next(event):
     widget = event.widget
     widget.tk_focusNext().focus()
-frm.resizable(0,0)
-frm.state('zoomed')
-bg_frame=Ige = photo
-bg_panel.pack(fill='both',expand='yes')
+
+
 lgn_frame = tkinter.Frame(frm, bg='#040405', width=950, height=600)
 lgn_frame.place(x=500, y=230)
 frm.txt = "WELCOME"
@@ -77,7 +77,7 @@ frm.heading = tkinter.Label(lgn_frame, text=frm.txt, font=('yu gothic ui', 25, "
 frm.heading.place(x=80, y=30, width=300, height=30)
 
 
-side_image = Image.open('images\\vector.png')
+side_image = Image.open('images\\3.png')
 photo = ImageTk.PhotoImage(side_image)
 side_image_label = tkinter.Label(lgn_frame, image=photo, bg='#040405')
 side_image_label.image = photo
@@ -91,7 +91,7 @@ sign_in_image_label.image = photo
 sign_in_image_label.place(x=620, y=130)
 
 
-sign_in_label = tkinter.Label(lgn_frame, text="Sign In", bg="#040405", fg="white",
+sign_in_label = tkinter.Label(lgn_frame, text="Register", bg="#040405", fg="white",
                             font=("yu gothic ui", 17, "bold"))
 sign_in_label.place(x=650, y=240)
 
