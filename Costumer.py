@@ -8,6 +8,7 @@ from ConectDB import connect, close_connection
 from tkinter import messagebox
 import sys
 from PIL import Image, ImageTk
+import os
 connection = connect()
 cursor = connection.cursor()
 c1='#020f12'
@@ -92,7 +93,17 @@ def add_item():
         print("Data inserted into the database.")
     except mysql.connector.Error as err:
         print(f"Error: {err}")
+def Logout():
+    # Ask for confirmation using a messagebox
+    confirmed = messagebox.askyesno("Confirm Logout", "Are you sure you want to logout?")
 
+    if confirmed:
+        # Perform any logout-related actions here
+        print("Logging out...")
+
+        # Optionally, destroy the main Tkinter window
+        frm.destroy()
+        os.system(f"python login.py ")
 
 # Function to submit order
 def submit_order():
@@ -232,14 +243,14 @@ label_chocolate.place(x="340", y="860")
 label_greentea = tkinter.Label(text="Greentea  15.000kip", fg="black",bg='#CFD5E2')
 label_greentea.place(x="600", y="860")
 
-label_addtable = tkinter.Label(text="Choose Table", fg="black",)
-label_addtable.place(x="1000", y="100")
+label_addtable = tkinter.Label(text="Choose Table", fg="black",bg='#CFD5E2')
+label_addtable.place(x="880", y="100")
 
-label_addmenu = tkinter.Label(text="Choose Menu", fg="black")
-label_addmenu.place(x="1250", y="100")
+label_addmenu = tkinter.Label(text="Choose Menu", fg="black",bg='#CFD5E2')
+label_addmenu.place(x="1180", y="100")
 
-label_addquantity = tkinter.Label(text="Choose Quantity", fg="black")
-label_addquantity.place(x="1500", y="100")
+label_addquantity = tkinter.Label(text="Choose Quantity", fg="black",bg='#CFD5E2')
+label_addquantity.place(x="1480", y="100")
 
 # Create button + hamburger
 button_add = tkinter.Button(text="Add Item", command=add_item, bg=c2,
@@ -283,17 +294,17 @@ button_cancel = tkinter.Button(text="Cancel", command=cancel, bg=c2,
     cursor='hand1',
     
     )
-button_cancel.place(x="1750", y="100")
+button_cancel.place(x="1770", y="100")
 # Table number ComboBox
 combo_table = ttk.Combobox(frm)
 combo_table['values'] = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
-combo_table.place(x="1100", y="100")
+combo_table.place(x="980", y="100")
 
 
 # Food ComboBox
 combo_food = ttk.Combobox(frm)
 combo_food['values'] = ('Hamburger', 'Sapageti', 'Kapao', 'Phutthai', 'Kaophut', 'Papayapokpok', 'Coke', 'Chocolate', 'Greentea')
-combo_food.place(x="1350", y="100")
+combo_food.place(x="1280", y="100")
 
 # Quantity Spinbox
 spinbox_quantity = ttk.Spinbox(frm, from_=1, to=10)
@@ -302,6 +313,20 @@ spinbox_quantity.place(x="1600", y="100" , width="50")
 
 welcome_label = tkinter.Label(frm, text=f"Welcome, {username}!", font=('Times New Roman', 16),bg='#508CF7')
 welcome_label.pack()
+
+button_Logout = tkinter.Button(text="Logout", command=Logout, bg=c2,
+    fg=c4,
+    activebackground=c3,
+    activeforeground=c4,
+    highlightthickness=2,
+    highlightbackground=c2,
+    highlightcolor='white',
+    
+    border=5,
+    cursor='hand1',
+    
+    )
+button_Logout.place(x="1750", y="1000")
 
 # Close the database connection when the tkinter window is closed
 frm.protocol("WM_DELETE_WINDOW", lambda: [connection.close(), frm.destroy()])
