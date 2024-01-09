@@ -5,6 +5,10 @@ import sys
 connection = connect()
 cursor = connection.cursor()
 
+c1='#020f12'
+c2='#508CF7'
+c3='#508CF7'
+c4='black'
 def fetch_bills():
     try:
         connection = connect()
@@ -34,6 +38,7 @@ def display_bills():
 def generate_receipt(bill_id, order_id, total_amount, payment_amount, change):
     receipt_content = f"Receipt for Bill ID: {bill_id}\n"
     receipt_content += f"Order ID: {order_id}\n"
+    receipt_content = f"Staff ID: {staff_id}\n"
     receipt_content += f"Total Amount: ${total_amount:.2f}\n"
     receipt_content += f"Payment Amount: ${payment_amount:.2f}\n"
     receipt_content += f"Change: ${change:.2f}\n"
@@ -88,8 +93,6 @@ def pay_money():
 
 frm = tk.Tk()
 frm.title("Bill Data")
-frm.config(bg='#CFD5E2')
-frm.geometry("1200x600")
 
 columns = ('Bill ID', 'Order ID', 'Total Amount', 'Payment Status', 'Bill Date')
 treeview = ttk.Treeview(frm, columns=columns, show="headings")
@@ -112,14 +115,23 @@ if len(sys.argv) >= 4:
     print(f"Position: {position}, Staff Name: {staff_name}, Staff ID: {staff_id}")
     print("Print statement reached.")
 
-payment_label = tk.Label(frm, text="Enter Payment Amount:")
+payment_label = tk.Label(frm, text="Enter Payment Amount:",bg='#CFD5E2')
 payment_label.pack()
 payment_label.config(bg='#CFD5E2')
 
 payment_entry = tk.Entry(frm)
 payment_entry.pack()
 
-pay_button = tk.Button(frm, text="Pay", command=pay_money)
+pay_button = tk.Button(frm, text="Pay", command=pay_money ,bg=c2,
+    fg=c4,
+    activebackground=c3,
+    activeforeground=c4,
+    highlightthickness=2,
+    highlightbackground=c2,
+    highlightcolor='white',
+    
+    border=5,
+    cursor='hand1',)
 pay_button.pack()
 
 frm.mainloop()

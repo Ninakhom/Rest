@@ -2,8 +2,8 @@ import tkinter
 frm=tkinter.Tk()
 frm.geometry('300x300')
 c1='#020f12'
-c2='#05d7ff'
-c3='#65e7ff'
+c2='#508CF7'
+c3='#508CF7'
 c4='black'
 btn=tkinter.Button(
     frm,
